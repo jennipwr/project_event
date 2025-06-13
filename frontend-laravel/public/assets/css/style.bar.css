@@ -1,0 +1,220 @@
+:root {
+  --primary-color: #539bff;
+  --secondary-color: #6610f2;
+  --gradient: linear-gradient(135deg, #539bff 0%, #6610f2 100%);
+}
+
+.hero-section {
+  background: var(--gradient);
+  color: white;
+  padding: 80px 0;
+}
+
+.event-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(93, 135, 255, 0.1);
+}
+
+.event-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 30px rgba(93, 135, 255, 0.2);
+}
+
+.event-image {
+  height: 200px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.price-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgb(242, 92, 92);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.date-badge {
+  background: var(--primary-color);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.organizer-info {
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.btn-primary {
+  background: var(--gradient);
+  border: none;
+  border-radius: 25px;
+  padding: 10px 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: (135deg, #4c7fff, #5a0ed9);
+  transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  border-radius: 25px;
+  padding: 10px 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background: var(--gradient);
+  border-color: transparent;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.section-title {
+  color: #2d3748;
+  font-weight: 700;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+/* .section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: var(--gradient);
+} */
+
+.search-container {
+  max-width: 450px;
+  width: 100%;
+}
+
+.search-input {
+  border-radius: 25px;
+  border: 2px solid #e9ecef;
+  padding: 10px 20px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(93, 135, 255, 0.25);
+}
+
+.search-btn {
+  border-radius: 25px;
+  padding: 10px 20px;
+  margin-left: -1px;
+}
+
+.profile-img {
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.profile-img:hover {
+  border-color: var(--primary-color);
+}
+
+.dropdown-menu {
+  min-width: 280px;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-header {
+  background: var(--gradient);
+  color: white;
+  border-radius: 8px 8px 0 0;
+  padding: 15px;
+  margin: -8px -8px 10px -8px;
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.register-link {
+  background: var(--gradient);
+  color: white !important;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 8px 15px;
+  margin: 0 15px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.register-link:hover {
+  background: linear-gradient(135deg, #539bff, #5a0ed9);
+  color: white !important;
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.register-link-nav {
+  color: var(--primary-color) !important;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.register-link-nav:hover {
+  color: var(--secondary-color) !important;
+  text-decoration: underline;
+}
+
+@media (max-width: 991px) {
+  .search-container {
+    margin: 15px 0;
+  }
+}
+
+/* Icon colors */
+.text-primary-custom {
+  color: var(--primary-color) !important;
+}
+.text-secondary-custom {
+  color: var(--secondary-color) !important;
+}
+
+/* Footer gradient */
+.bg-dark-gradient {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+}
