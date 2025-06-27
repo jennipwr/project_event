@@ -34,7 +34,8 @@ class RegisterController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->password,
-                'role_id' => 1 // Default role untuk member, sesuaikan dengan kebutuhan
+                'role_id' => 1,
+                'status' => 'aktif'
             ]);
 
             if ($response->successful()) {

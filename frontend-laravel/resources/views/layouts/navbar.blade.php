@@ -52,8 +52,14 @@
                     </a>
                 </div>
 
-                <!-- User Greeting and Profile Dropdown - Show when logged in -->
+                <!-- User Section - Show when logged in -->
                 <div class="user-section d-none align-items-center" id="userSection">
+                    <!-- Ticket Button -->
+                    <a href="{{ route('event.history') }}" class="btn btn-outline-primary ticket-btn me-3">
+                        <i class="fas fa-ticket-alt me-2"></i>
+                        Lihat Tiket
+                    </a>
+                    
                     <!-- User Greeting -->
                     <span class="user-greeting me-3" id="userGreeting">
                         Hai, Loading...
@@ -164,8 +170,8 @@ function toggleAuthElements() {
     const dropdownUserEmail = document.getElementById('dropdownUserEmail');
     
     if (sessionData.isLoggedIn && sessionData.user) {
-        // Hide auth buttons
-        authButtons.style.display = 'none';
+        // Hide auth buttons dengan d-none
+        authButtons.classList.add('d-none');
         
         // Show user section
         userSection.classList.remove('d-none');
@@ -177,30 +183,15 @@ function toggleAuthElements() {
         // Update dropdown user info
         dropdownUserName.textContent = sessionData.user.name;
         dropdownUserEmail.textContent = sessionData.user.email;
-        
-        // Optional: Set profile image berdasarkan user (jika ada sistem upload gambar)
-        // document.getElementById('profileImage').src = sessionData.user.profile_image || '../assets/images/profile/user-1.jpg';
-        
     } else {
-        // Show auth buttons
-        authButtons.style.display = 'flex';
+        // Show auth buttons dengan menghapus d-none
+        authButtons.classList.remove('d-none');
         
         // Hide user section
         userSection.classList.add('d-none');
         userSection.classList.remove('d-flex');
     }
 }
-
-// Fungsi untuk handle logout
-// function handleLogout(event) {
-//     event.preventDefault();
-    
-//     // Tampilkan konfirmasi
-//     if (confirm('Apakah Anda yakin ingin logout?')) {
-//         // Redirect ke route logout Laravel
-//         window.location.href = "{{ route('logout') }}";
-//     }
-// }
 
 // Jalankan function saat halaman dimuat
 document.addEventListener('DOMContentLoaded', function() {
@@ -237,6 +228,31 @@ document.getElementById('profileImage').addEventListener('error', function() {
 .auth-buttons .btn-primary:hover {
     background-color: var(--bs-primary);
     opacity: 0.9;
+}
+
+/* Ticket Button Styles */
+.ticket-btn {
+    padding: 8px 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid #5d87ff;
+    color: #5d87ff;
+    background: rgba(93, 135, 255, 0.05);
+    white-space: nowrap;
+}
+
+.ticket-btn:hover {
+    background: linear-gradient(135deg, #5d87ff 0%, #764ba2 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(93, 135, 255, 0.3);
+    border-color: transparent;
+}
+
+.ticket-btn i {
+    font-size: 0.9rem;
 }
 
 /* User greeting styles */
@@ -305,6 +321,27 @@ document.getElementById('profileImage').addEventListener('error', function() {
 }
 
 /* Responsive adjustments */
+@media (max-width: 992px) {
+    .user-section {
+        flex-direction: column;
+        align-items: flex-start !important;
+        width: 100%;
+        margin-top: 15px;
+        gap: 10px;
+    }
+    
+    .ticket-btn {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    
+    .user-greeting {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+}
+
 @media (max-width: 768px) {
     .auth-buttons {
         flex-direction: column;
@@ -315,18 +352,6 @@ document.getElementById('profileImage').addEventListener('error', function() {
     .auth-buttons .btn {
         width: 100%;
         margin-bottom: 5px;
-    }
-    
-    .user-section {
-        flex-direction: column;
-        align-items: flex-start !important;
-        width: 100%;
-        margin-top: 10px;
-    }
-    
-    .user-greeting {
-        font-size: 1rem;
-        margin-bottom: 10px;
     }
     
     .dropdown-menu {
@@ -347,6 +372,11 @@ document.getElementById('profileImage').addEventListener('error', function() {
     .profile-img {
         width: 30px;
         height: 30px;
+    }
+    
+    .ticket-btn {
+        font-size: 0.9rem;
+        padding: 6px 12px;
     }
 }
 
@@ -371,5 +401,28 @@ document.getElementById('profileImage').addEventListener('error', function() {
     background: #dee2e6;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+/* Hover effects untuk better UX */
+.navbar-nav .nav-item {
+    position: relative;
+}
+
+.ticket-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #5d87ff 0%, #764ba2 100%);
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.ticket-btn:hover::before {
+    opacity: 1;
 }
 </style>

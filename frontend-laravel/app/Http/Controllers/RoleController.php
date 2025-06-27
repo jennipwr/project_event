@@ -8,9 +8,9 @@ class RoleController extends Controller
 {
     // public function index()
     // {
-    //     $response = Http::get('http://localhost:3000/api/roles'); // Fixed: roles plural
+    //     $response = Http::get('http://localhost:3000/api/roles');
     //     $roles = $response->json();
-    //     return view('home', ['roles' => $roles]); // Fixed: roles plural
+    //     return view('home', ['roles' => $roles]);
     // }
 }
 

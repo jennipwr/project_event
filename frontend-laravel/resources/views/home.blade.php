@@ -32,18 +32,10 @@
         <div class="col-md-6">
             <div class="search-box">
                 <input type="text" class="form-control" placeholder="Cari event..." id="searchInput">
-                <i class="fas fa-search search-icon"></i>
             </div>
         </div>
         <div class="col-md-6">
             <div class="d-flex gap-2">
-                <select class="form-select" id="categoryFilter">
-                    <option value="">Semua Kategori</option>
-                    <option value="conference">Conference</option>
-                    <option value="workshop">Workshop</option>
-                    <option value="seminar">Seminar</option>
-                    <option value="exhibition">Exhibition</option>
-                </select>
                 <select class="form-select" id="priceFilter">
                     <option value="">Semua Harga</option>
                     <option value="free">Gratis</option>
@@ -52,6 +44,7 @@
             </div>
         </div>
     </div>
+
 
     <div id="events-container" class="row">
         <!-- Loading state -->
@@ -82,7 +75,9 @@
     </div>
 </div>
 
-<!-- Additional CSS -->
+@endsection
+
+@section('ExtraCSS')
 <style>
 .search-box {
     position: relative;
@@ -320,7 +315,6 @@
     }
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .event-card {
         margin-bottom: 20px;
@@ -342,13 +336,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadAllEvents();
     
-    // Search functionality
     document.getElementById('searchInput').addEventListener('input', function() {
-        filterEvents();
-    });
-    
-    // Filter functionality
-    document.getElementById('categoryFilter').addEventListener('change', function() {
         filterEvents();
     });
     
@@ -364,11 +352,9 @@ async function loadAllEvents() {
         const response = await fetch('/api/events/all');
         const data = await response.json();
         
-        // Hide loading state
         document.getElementById('loading-state').style.display = 'none';
         
         if (data.error || !data.events || data.events.length === 0) {
-            // Show empty state
             document.getElementById('empty-state').classList.remove('d-none');
             return;
         }
@@ -378,7 +364,6 @@ async function loadAllEvents() {
         
     } catch (error) {
         console.error('Error loading events:', error);
-        // Hide loading state and show error
         document.getElementById('loading-state').innerHTML = `
             <div class="col-12 text-center py-5">
                 <div class="empty-state-icon">
@@ -410,13 +395,10 @@ function displayEvents(events) {
         const priceClass = minPrice === 0 ? 'free' : '';
         const freeBadge = minPrice === 0 ? '<div class="free-badge">Gratis</div>' : '';
         
-        // Random popular badge for demo (you can replace with actual logic)
         const popularBadge = Math.random() > 0.7 ? '<div class="popular-badge">Popular</div>' : '';
-        
-        // Get date range from sessions
+
         const dateRange = getEventDateRange(event.sessions || []);
         
-        // Mock data for additional stats (replace with actual data)
         const attendees = Math.floor(Math.random() * 500) + 50;
         const rating = (Math.random() * 2 + 3).toFixed(1); // 3.0 - 5.0
         
@@ -466,26 +448,22 @@ function displayEvents(events) {
 
 function filterEvents() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const categoryFilter = document.getElementById('categoryFilter').value;
     const priceFilter = document.getElementById('priceFilter').value;
-    
+
     let filteredEvents = allEvents.filter(event => {
         const matchesSearch = event.nama_event.toLowerCase().includes(searchTerm) || 
                             (event.deskripsi && event.deskripsi.toLowerCase().includes(searchTerm));
-        
-        const matchesCategory = !categoryFilter || 
-                              (event.kategori && event.kategori.toLowerCase() === categoryFilter);
-        
+
         const minPrice = getMinPrice(event.sessions || []);
         const matchesPrice = !priceFilter || 
                            (priceFilter === 'free' && minPrice === 0) ||
                            (priceFilter === 'paid' && minPrice > 0);
-        
-        return matchesSearch && matchesCategory && matchesPrice;
+
+        return matchesSearch && matchesPrice;
     });
-    
+
     displayEvents(filteredEvents);
-    
+
     if (filteredEvents.length === 0) {
         document.getElementById('events-container').innerHTML = `
             <div class="col-12 text-center py-5">
@@ -498,6 +476,7 @@ function filterEvents() {
         `;
     }
 }
+
 
 function getMinPrice(sessions) {
     if (!sessions || sessions.length === 0) return 0;

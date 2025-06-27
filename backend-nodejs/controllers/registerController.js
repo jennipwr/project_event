@@ -4,7 +4,7 @@ const connectDB = require('../database.js');
 
 const registerController = {
     async register(req, res) {
-        const { name, email, password, role_id_role = 1 } = req.body;
+        const { name, email, password, role_id_role = 1, status = 'aktif' } = req.body;
 
         // Validasi input
         if (!name || !email || !password) {
@@ -72,8 +72,8 @@ const registerController = {
 
             // Insert user ke database
             const insertQuery = `
-                INSERT INTO pengguna (id, name, email, password, role_id_role, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, NOW(), NOW())
+                INSERT INTO pengguna (id, name, email, password, role_id_role, status, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
             `;
 
             await db.execute(insertQuery, [
@@ -81,7 +81,8 @@ const registerController = {
                 name,
                 email,
                 hashedPassword,
-                role_id_role
+                role_id_role,
+                status
             ]);
 
             // Generate JWT token (optional, untuk auto-login setelah register)

@@ -22,10 +22,7 @@ class KeuanganController extends Controller
         return view('keuangan.dashboard', compact('user'));
     }
 
-    /**
-     * Display the keuangan dashboard
-     */
-    public function showDashboard()
+    public function showList()
     {
         try {
             // Ambil data statistik untuk dashboard
@@ -42,7 +39,7 @@ class KeuanganController extends Controller
             return view('keuangan.index', compact('statistics'));
         } catch (\Exception $e) {
             Log::error('Error loading keuangan dashboard: ' . $e->getMessage());
-            return view('keuangan.index', ['statistics' => []]);
+            return view('keuangan.list', ['statistics' => []]);
         }
     }
 

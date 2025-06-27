@@ -29,7 +29,7 @@ exports.login = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: user.id, role: user.nama_role, email: user.email },
+            { id: user.id, role: user.nama_role, email: user.email, status: user.status, role_id_role: user.role_id_role },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -40,7 +40,9 @@ exports.login = async (req, res) => {
             id: user.id,
             role: user.nama_role,
             name: user.name,
-            email: user.email
+            email: user.email,
+            status: user.status,
+            role_id_role: user.role_id_role
         });
 
     } catch (err) {

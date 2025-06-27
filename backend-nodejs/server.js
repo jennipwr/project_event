@@ -1,56 +1,55 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const path = require('path');
-
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const path = require("path");
 const app = express();
 
-// Middleware umum
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:8000', // URL Laravel Anda
-    credentials: true
+  origin: process.env.FRONTEND_URL || "http://localhost:8000",
+  credentials: true,
 }));
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 
-// Folder untuk menyimpan poster dan akses statis
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Import routes
-const AuthRoutes = require('./routes/AuthRoutes');
-const RoleRoutes = require('./routes/RoleRoutes');
-const eventRoutes = require('./routes/eventRoutes');
-const registerRoutes = require('./routes/registerRoutes');
-const registrasiRoutes = require('./routes/registrasiRoutes');
-const guestRoutes = require('./routes/guestRoutes'); // TAMBAHAN BARU
-const detailRoutes = require('./routes/detailRoutes');
+// Import dan mount routes satu per satu
+const routes = [
+  { name: "AuthRoutes", path: "./routes/AuthRoutes", mount: "/api" },
+  { name: "RoleRoutes", path: "./routes/RoleRoutes", mount: "/api" },
+  { name: "registerRoutes", path: "./routes/registerRoutes", mount: "/api" },
+  { name: "guestRoutes", path: "./routes/guestRoutes", mount: "/api" },
+  { name: "eventRoutes", path: "./routes/eventRoutes", mount: "/api" },
+  { name: "registrasiRoutes", path: "./routes/registrasiRoutes", mount: "/api/registrasi" },
+  { name: "detailRoutes", path: "./routes/detailRoutes", mount: "/api/detail" },
+  { name: "keuanganRoutes", path: "./routes/keuanganRoutes", mount: "/api/keuangan" },
+  { name: "sertifikatRoutes", path: "./routes/sertifikatRoutes", mount: "/api/sertifikat" },
+  { name: "scanRoutes", path: "./routes/scanRoutes", mount: "/api/panitia/scan" },
+  { name: "registerAdminRoutes", path: "./routes/registerAdminRoutes", mount: "/api" },
+  { name: "penggunaRoutes", path: "./routes/penggunaRoutes", mount: "/api" },
+];
 
-app.use('/api/registrasi', registrasiRoutes);
-app.use('/api/detail', detailRoutes);
-// Gunakan routes - TANPA DUPLIKASI
-app.use('/api', AuthRoutes);
-app.use('/api', RoleRoutes);
-app.use('/api', registerRoutes);
-app.use('/api', guestRoutes); // TAMBAHAN BARU - untuk guest/public routes
-// app.use('/api', detailRoutes);
-
-
-// Mount eventRoutes ke dua path yang berbeda
-app.use('/api', eventRoutes);                    // Untuk route /api/event, /api/events/user/:userId
-app.use('/api/panitia', eventRoutes);           // Untuk route /api/panitia/events/:eventId/detail
-
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        success: false,
-        message: 'Something went wrong!'
-    });
+routes.forEach(({ name, path, mount }) => {
+  try {
+    console.log(`Loading and mounting ${name}...`);
+    const route = require(path);
+    app.use(mount, route);
+    console.log(`✓ ${name} mounted successfully at ${mount}`);
+  } catch (error) {
+    console.error(`✗ Failed to mount ${name}:`, error.message);
+    process.exit(1);
+  }
 });
 
-// Mulai server
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-    console.log(`Server berjalan di http://localhost:${PORT}`);
+  console.log(`🎉 Server running successfully on http://localhost:${PORT}`);
+});
+
+app.get("/api/test", (req, res) => {
+  res.json({
+    success: true,
+    message: "Server is working!",
+    timestamp: new Date().toISOString()
+  });
 });

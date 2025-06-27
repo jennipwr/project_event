@@ -37,7 +37,9 @@ class LoginController extends Controller
                     'id' => $userData['id'],
                     'role' => $userData['role'],
                     'name' => $userData['name'],
-                    'email' => $userData['email']
+                    'email' => $userData['email'],
+                    'status' => $userData['status'],
+                    'role_id_role' => $userData['role_id_role'] ?? null
                 ];
                 $token = $userData['token'];
 

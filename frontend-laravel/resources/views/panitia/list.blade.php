@@ -67,11 +67,13 @@
         <div class="card-body">
           <div class="d-flex justify-content-between">
             <div>
-              <h6 class="card-title mb-0">Event Aktif</h6>
-              <h3 class="mb-0">{{ isset($events) ? count($events) : 0 }}</h3>
+              <h6 class="card-title mb-0">Total Peserta</h6>
+              <h3 class="mb-0">
+                {{ isset($events) ? array_sum(array_column($events, 'total_peserta')) : 0 }}
+              </h3>
             </div>
             <div class="align-self-center">
-              <i class="fas fa-check-circle fa-2x opacity-75"></i>
+              <i class="fas fa-users fa-2x opacity-75"></i>
             </div>
           </div>
         </div>
@@ -130,15 +132,21 @@
 
                   <!-- Statistics -->
                   <div class="row text-center mb-3">
-                    <div class="col-6">
+                    <div class="col-4">
                       <div class="border-end">
                         <div class="fw-bold text-primary">{{ $event['total_sesi'] ?? 0 }}</div>
                         <small class="text-muted">Total Sesi</small>
                       </div>
                     </div>
-                    <div class="col-6">
-                      <div class="fw-bold text-success">{{ $event['id_event'] }}</div>
-                      <small class="text-muted">ID Event</small>
+                    <div class="col-4">
+                      <div class="border-end">
+                        <div class="fw-bold text-success">{{ $event['total_peserta'] ?? 0 }}</div>
+                        <small class="text-muted">Peserta</small>
+                      </div>
+                    </div>
+                    <div class="col-4">
+                      <div class="fw-bold text-warning">{{ $event['sisa_kapasitas'] ?? 0 }}</div>
+                      <small class="text-muted">Sisa Slot</small>
                     </div>
                   </div>
 
@@ -236,11 +244,9 @@
 @section('ExtraJS')
 <script>
 function showEventDetail(eventId) {
-  // Show modal
   var modal = new bootstrap.Modal(document.getElementById('eventDetailModal'));
   modal.show();
   
-  // Reset content to loading state
   document.getElementById('eventDetailContent').innerHTML = `
     <div class="text-center py-4">
       <div class="spinner-border" role="status">
@@ -250,7 +256,6 @@ function showEventDetail(eventId) {
     </div>
   `;
   
-  // Fetch event detail via AJAX
   fetch(`/api/panitia/events/${eventId}/detail`)
     .then(response => {
       console.log('Response status:', response.status);
@@ -268,12 +273,39 @@ function showEventDetail(eventId) {
     })
     .then(data => {
       console.log('Received data:', data);
+      console.log('Data structure:', {
+        total_peserta: data.total_peserta,
+        sisa_kapasitas: data.sisa_kapasitas,
+        sessions: data.sessions,
+        available_keys: Object.keys(data)
+      });
       
       if (data.error) {
         throw new Error(data.message || 'Terjadi kesalahan');
       }
       
-      // Build event detail HTML berdasarkan struktur data yang sebenarnya
+      // Calculate statistics
+      let totalPeserta = data.total_peserta || 0;
+      let sisaKapasitas = data.sisa_kapasitas || 0;
+      let totalKapasitas = data.total_kapasitas || 0;
+
+      if ((!totalPeserta || !sisaKapasitas) && data.sessions && Array.isArray(data.sessions)) {
+        let pesertaTerdaftar = 0;
+        let kapasitasTotal = 0;
+        
+        data.sessions.forEach(session => {
+          console.log('Session data:', session);
+          pesertaTerdaftar += parseInt(session.peserta_terdaftar || session.total_peserta || 0);
+          kapasitasTotal += parseInt(session.jumlah_peserta || session.kapasitas || 0);
+        });
+        
+        totalPeserta = pesertaTerdaftar;
+        totalKapasitas = kapasitasTotal;
+        sisaKapasitas = totalKapasitas - totalPeserta;
+      }
+
+      console.log('Final calculated totals:', { totalPeserta, totalKapasitas, sisaKapasitas });
+      
       let eventDetailHtml = `
         <!-- Event Poster -->
         <div class="row mb-4">
@@ -303,16 +335,22 @@ function showEventDetail(eventId) {
             
             <!-- Statistics -->
             <div class="row text-center">
-              <div class="col-6">
+              <div class="col-4">
                 <div class="border rounded p-2">
                   <div class="fw-bold text-primary fs-4">${data.sessions ? data.sessions.length : 0}</div>
                   <small class="text-muted">Total Sesi</small>
                 </div>
               </div>
-              <div class="col-6">
+              <div class="col-4">
                 <div class="border rounded p-2">
-                  <div class="fw-bold text-info fs-4">${data.pengguna_id}</div>
-                  <small class="text-muted">Organizer ID</small>
+                  <div class="fw-bold text-success fs-4">${totalPeserta}</div>
+                  <small class="text-muted">Peserta</small>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="border rounded p-2">
+                  <div class="fw-bold text-warning fs-4">${sisaKapasitas}</div>
+                  <small class="text-muted">Sisa Slot</small>
                 </div>
               </div>
             </div>
@@ -431,6 +469,13 @@ function showEventDetail(eventId) {
         </div>
       `;
     });
+}
+
+function confirmDelete(eventId, eventName) {
+  document.getElementById('eventName').textContent = eventName;
+  document.getElementById('deleteForm').action = `/panitia/event/${eventId}/delete`;
+  var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+  deleteModal.show();
 }
 
 function confirmDelete(eventId, eventName) {

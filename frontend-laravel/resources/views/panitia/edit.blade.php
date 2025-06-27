@@ -151,27 +151,22 @@
           
           <div id="sessions-list">
             @php
-              // Handle sessions data - could be JSON string or array
               $originalSessions = $event['sessions'] ?? [];
               
-              // If sessions is a JSON string, decode it
               if (is_string($originalSessions)) {
                   $originalSessions = json_decode($originalSessions, true) ?: [];
               }
               
               $oldSessions = old('sessions', []);
               
-              // Use old input first, then fallback to existing data
               $sessions = !empty($oldSessions) ? $oldSessions : $originalSessions;
               $sessionCount = count($sessions);
               
-              // If no sessions exist, create one empty session
               if ($sessionCount === 0) {
                   $sessionCount = 1;
                   $sessions = [['nama_sesi' => '', 'tanggal_sesi' => '', 'waktu_sesi' => '', 'narasumber_sesi' => '',  'jumlah_peserta' => '',  'lokasi_sesi' =>'', 'biaya_sesi' =>'']];
               }
               
-              // Debug output (uncomment for testing)
               //dd('Event data:', $event, 'Original sessions:', $originalSessions, 'Final sessions:', $sessions);
             @endphp
 

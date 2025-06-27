@@ -18,22 +18,18 @@ class DetailController extends Controller
     public function show($eventId)
     {
         try {
-            // Log the API call for debugging
             Log::info('=== Laravel: Fetching event data ===');
             Log::info('Event ID: ' . $eventId);
             Log::info('API URL: ' . $this->nodeApiUrl . '/api/events/' . $eventId);
 
-            // Get event detail from Node.js API with timeout
             $response = Http::timeout(30)
                 ->acceptJson()
                 ->get($this->nodeApiUrl . '/api/detail/' . $eventId);
-            
-            // Log the response for debugging
+
             Log::info('API Response Status: ' . $response->status());
             Log::info('API Response Headers: ' . json_encode($response->headers()));
             Log::info('API Response Body: ' . $response->body());
 
-            // Check if request was successful
             if (!$response->successful()) {
                 Log::error('API request failed with status: ' . $response->status());
                 Log::error('Response body: ' . $response->body());
@@ -45,13 +41,10 @@ class DetailController extends Controller
                 }
             }
 
-            // Parse JSON response
             $responseData = $response->json();
             
-            // Log parsed response
             Log::info('Parsed response data: ' . json_encode($responseData));
 
-            // Validate response structure
             if (!$responseData) {
                 Log::error('Empty response from API');
                 abort(404, 'Event tidak ditemukan');
@@ -62,20 +55,17 @@ class DetailController extends Controller
                 abort(500, 'Format respons API tidak valid');
             }
             
-            // Check for success status in response
             if (isset($responseData['success']) && $responseData['success'] === false) {
                 Log::error('API returned error: ' . ($responseData['message'] ?? 'Unknown error'));
                 abort(404, $responseData['message'] ?? 'Event tidak ditemukan');
             }
 
-            // Check if event data exists in response
             if (!isset($responseData['event'])) {
                 Log::error('Event key not found in API response');
                 Log::error('Available keys: ' . implode(', ', array_keys($responseData)));
                 abort(404, 'Data event tidak lengkap');
             }
 
-            // Validate required event fields
             $requiredFields = ['id_event', 'nama_event'];
             foreach ($requiredFields as $field) {
                 if (!isset($responseData['event'][$field])) {
@@ -84,7 +74,6 @@ class DetailController extends Controller
                 }
             }
 
-            // Process and format the event data
             $eventData = $this->processEventData($responseData);
 
             Log::info('Successfully processed event data for ID: ' . $eventId);
@@ -105,44 +94,30 @@ class DetailController extends Controller
         }
     }
 
-    /**
-     * Process and format event data
-     */
+
     private function processEventData($responseData)
     {
         $eventData = $responseData;
 
-        // Ensure sessions array exists
         if (!isset($eventData['event']['sessions'])) {
             $eventData['event']['sessions'] = [];
         }
 
-        // Ensure organizer name exists
         if (!isset($eventData['event']['organizer_name']) || empty($eventData['event']['organizer_name'])) {
             $eventData['event']['organizer_name'] = 'Tidak diketahui';
         }
 
-        // Ensure date_range exists
         if (!isset($eventData['event']['date_range']) || empty($eventData['event']['date_range'])) {
             $eventData['event']['date_range'] = $this->formatDateRange($eventData['event']);
         }
 
-        // Ensure price_range exists
         if (!isset($eventData['event']['price_range']) || empty($eventData['event']['price_range'])) {
             $eventData['event']['price_range'] = $this->formatPriceRange($eventData['event']);
         }
 
-        // Fix poster URL if it has backslashes
-        // if (isset($eventData['event']['poster_url']) && $eventData['event']['poster_url']) {
-        //     $eventData['event']['poster_url'] = str_replace('\\', '/', $eventData['event']['poster_url']);
-        // }
-
         return $eventData;
     }
 
-    /**
-     * Format date range from event data (fallback)
-     */
     private function formatDateRange($event)
     {
         try {
@@ -164,9 +139,6 @@ class DetailController extends Controller
         }
     }
 
-    /**
-     * Format price range from event data (fallback)
-     */
     private function formatPriceRange($event)
     {
         try {

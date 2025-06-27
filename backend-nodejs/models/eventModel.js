@@ -75,7 +75,6 @@ exports.insertMultipleSessions = (eventId, sessions, callback) => {
   db.query(sql, [values], callback);
 };
 
-// Tambahkan fungsi untuk mengambil event berdasarkan pengguna
 exports.findByUserId = (userId, callback) => {
   const sql = `
     SELECT 
@@ -120,7 +119,6 @@ exports.findByUserId = (userId, callback) => {
         event.sessions = [];
       }
       
-      // Remove the concatenated string
       delete event.sessions_data;
       return event;
     });
@@ -155,7 +153,6 @@ exports.findAll = (callback) => {
       return callback(err, null);
     }
 
-    // Process sessions data
     const processedResults = results.map(event => {
       if (event.sessions_data) {
         const sessions = event.sessions_data.split(';;').map(sessionStr => {
@@ -174,7 +171,6 @@ exports.findAll = (callback) => {
         event.sessions = [];
       }
       
-      // Remove the concatenated string
       delete event.sessions_data;
       return event;
     });
@@ -209,7 +205,6 @@ exports.findById = (id, callback) => {
       return callback(null, null);
     }
 
-    // Process the results to group sessions
     const event = {
       id: results[0].id,
       nama_event: results[0].nama_event,
@@ -227,14 +222,13 @@ exports.findById = (id, callback) => {
       tanggal_akhir: results[0].tanggal_akhir,
       waktu_akhir: results[0].waktu_akhir,
       has_sessions: results[0].has_sessions,
-      pengguna_id: results[0].pengguna_id,  // Tambahkan pengguna_id
-      pengguna_name: results[0].pengguna_name,  // Tambahkan nama pengguna
+      pengguna_id: results[0].pengguna_id,
+      pengguna_name: results[0].pengguna_name, 
       created_at: results[0].created_at,
       updated_at: results[0].updated_at,
       sessions: []
     };
 
-    // Add sessions if they exist
     results.forEach(row => {
       if (row.session_id) {
         event.sessions.push({

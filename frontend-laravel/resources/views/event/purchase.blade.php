@@ -183,7 +183,7 @@
 
         <!-- Right Section - Event Summary -->
         <div class="col-lg-4">
-            <div class="sticky-top" style="top: 20px;">
+            <div class="sticky-top" style="top: 100px; z-index: 9;">
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-light">
                         <h5 class="card-title mb-0">
@@ -200,7 +200,7 @@
 
                         <!-- Event Details -->
                         <h6 class="fw-bold text-dark">{{ $eventData['data']['event']['nama_event'] }}</h6>
-                        <p class="text-muted small mb-3">{{ $eventData['data']['event']['organizer_name'] ?? 'Organizer tidak diketahui' }}</p>
+                        <p class="text-muted small mb-3">{{ $eventData['data']['event']['nama_penyelenggara'] ?? 'Organizer tidak diketahui' }}</p>
                         
                         <!-- Selected Session Details -->
                         <div id="selectedSessionDetails" style="display: none;">
@@ -287,7 +287,7 @@
         border: none;
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
-    
+
     .img-thumbnail {
         border: 2px solid #007bff;
     }
